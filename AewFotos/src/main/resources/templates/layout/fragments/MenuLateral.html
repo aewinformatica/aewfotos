@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt" xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org">
+	
+<body>
+<aside class="aw-layout-sidebar  js-sidebar" th:fragment="layout-sidebar">
+	<div class="aw-layout-sidebar__content">
+
+    	<nav class="aw-menu  js-menu">
+      		<ul class="aw-menu__list">
+
+        		<li class="aw-menu__item" th:href="@{/}">
+          			<a th:href="@{/}"><i class="fa  fa-fw  fa-home"></i><span>Dashboard</span></a>
+        		</li>
+        		
+        		        		<li class="aw-menu__item" th:href="@{/}">
+          			<a th:href="@{/clientes}"><i class="fa  fa-fw  fa-book"></i><span>Clientes</span></a>
+        		</li>
+        		
+
+      		</ul>
+    	</nav>
+	</div>
+</aside>
+</body>
+</html>
