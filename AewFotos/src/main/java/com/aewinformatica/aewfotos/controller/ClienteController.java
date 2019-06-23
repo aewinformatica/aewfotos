@@ -1,6 +1,7 @@
 package com.aewinformatica.aewfotos.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -105,7 +106,9 @@ public class ClienteController {
 	public ModelAndView editar(@PathVariable("codigo") Cliente cliente) {
 		
 		ModelAndView mv = novo(cliente);
+		
 		Foto foto = buscarFotoCodigo(cliente);
+		System.out.println(foto.toString());
 		cliente.setFoto(foto);
 		
 		mv.addObject(cliente);
@@ -117,6 +120,18 @@ public class ClienteController {
 		ModelAndView mv =  new ModelAndView("cliente/Upload");
 		mv.addObject(cliente);
 		return mv;
+	}
+	
+	public Foto buscarFotoCliente(Cliente cliente) {
+		Optional<Foto> optFoto = fotos.findByClienteCodigo(cliente);
+		
+		if(!optFoto.isPresent()) {
+			
+			Foto foto = optFoto.get();
+			return foto;
+		}
+		
+		return null;
 	}
 	
 	public Foto buscarFotoCodigo(Cliente cliente) {
