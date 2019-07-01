@@ -116,6 +116,10 @@
             {% } %}
             <strong class="error text-danger"></strong>
         </td>
+		<td>
+		<label for="titulo">Titulo</label>
+		<input id="titulo" type="text" name="titulo" </>
+		</td>
         <td>
             <p class="size">Processing...</p>
             <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="progress-bar progress-bar-success" style="width:0%;"></div></div>
@@ -166,6 +170,8 @@
             {% if (file.error) { %}
                 <div><span class="label label-danger">Error</span> {%=file.error%}</div>
             {% } %}
+        </td>
+		<td> <span>{%=file.titulo%}</span>
         </td>
         <td>
             <span class="size">{%=o.formatFileSize(file.size)%}</span>

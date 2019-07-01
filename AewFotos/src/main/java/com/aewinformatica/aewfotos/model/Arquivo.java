@@ -21,6 +21,7 @@ public class Arquivo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String Titulo;
     private String thumbnailFilename;
     private String newFilename;
     private String contentType;
@@ -73,13 +74,22 @@ public class Arquivo {
     public void setName(String name) {
         this.name = name;
     }
+    
+    
 
-    /**
+    public String getTitulo() {
+		return Titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		Titulo = titulo;
+	}
+
+	/**
      * @return the thumbnailFilename
      */
     public String getThumbnailFilename() {
     	
-//    	String thumbnailFilename = newFilename + "-thumbnail.png";
         return thumbnailFilename;
     }
 

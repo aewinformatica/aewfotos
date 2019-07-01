@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,9 +50,8 @@ public class UploadController {
 	    @Value("${file.upload.directory}")
 	    private String fileUploadDirectory;
 	 
-//    @RequestMapping(value = "/upload", method = RequestMethod.POST)
 	@PostMapping
-    public @ResponseBody Map<String, Object> upload(MultipartHttpServletRequest request, HttpServletResponse response) {
+    public @ResponseBody Map<String, Object> upload(MultipartHttpServletRequest request, HttpServletResponse response, Arquivo mArquivo) {
         log.debug("uploadPost called");
         Iterator<String> itr = request.getFileNames();
         MultipartFile mpf;
@@ -72,6 +73,7 @@ public class UploadController {
                 
                 Arquivo arquivo = new Arquivo();
                 arquivo.setName(mpf.getOriginalFilename());
+                arquivo.setTitulo(mArquivo.getTitulo());
                 arquivo.setNewFilename(newFilename);
                 arquivo.setContentType(contentType);
                 arquivo.setSize(mpf.getSize());
@@ -93,12 +95,14 @@ public class UploadController {
                 
                 if(contentType.contains("video/")){
                 arquivo.setUrl("/movie/"+arquivo.getId());
+                arquivo.setMovieUrl("/movie/"+arquivo.getId());
                 System.out.println("é um video");
                 
                 }
                 
                 if(contentType.contains("audio/")){
                 arquivo.setUrl("/music/"+arquivo.getId());
+                arquivo.setMovieUrl("/music/"+arquivo.getId());
                 System.out.println("é um audio");
                 
                 }
@@ -122,7 +126,7 @@ public class UploadController {
         return files;
     }
 	
-//    @RequestMapping(value = "/upload", method = RequestMethod.GET)
+
 	@GetMapping
     public @ResponseBody Map<String, Object> list() {
         log.debug("uploadGet called");
@@ -134,6 +138,7 @@ public class UploadController {
             arquivo.setMovieUrl("/upload/movie/"+arquivo.getId());
             System.out.println(arquivo.getContentType());
         	}
+        	
         	if(arquivo.getContentType().contains("image/")) {
         	arquivo.setUrl("/upload/picture/"+arquivo.getId());
             arquivo.setThumbnailUrl("/upload/thumbnail/"+arquivo.getId());
@@ -165,6 +170,7 @@ public class UploadController {
             IOUtils.copy(is, response.getOutputStream());
         } catch(IOException e) {
             log.error("Could not show picture "+id, e);
+            e.printStackTrace();
         }
     }
     
@@ -179,7 +185,8 @@ public class UploadController {
             InputStream is = new FileInputStream(arquivoFile);
             IOUtils.copy(is, response.getOutputStream());
         } catch(IOException e) {
-            log.error("Could not show movie "+id, e);
+            log.error("Could not show movie "+id, e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -213,6 +220,26 @@ public class UploadController {
         } catch(IOException e) {
             log.error("Could not show thumbnail "+id, e);
         }
+    }
+    
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
+    public @ResponseBody List<Map<String, Object>> delete(@PathVariable Long id) {
+        Arquivo arquivo = PesquisaPorCodigo(id);
+        File arquivoFile = new File(fileUploadDirectory+"/"+arquivo.getNewFilename());
+        arquivoFile.delete();
+        
+        if(arquivo.getContentType().contains("image/")) {
+        File thumbnailFile = new File(fileUploadDirectory+"/"+arquivo.getThumbnailFilename());
+        thumbnailFile.delete();
+        }
+        
+        arquivos.delete(arquivo);
+        
+        List<Map<String, Object>> results = new ArrayList<>();
+        Map<String, Object> success = new HashMap<>();
+        success.put("success", true);
+        results.add(success);
+        return results;
     }
     
 	public Arquivo PesquisaPorCodigo(Long id) {

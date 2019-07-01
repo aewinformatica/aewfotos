@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.aewinformatica.aewfotos.model.Arquivo;
 import com.aewinformatica.aewfotos.model.Cliente;
 import com.aewinformatica.aewfotos.model.Foto;
 import com.aewinformatica.aewfotos.repository.Clientes;
@@ -116,9 +117,11 @@ public class ClienteController {
 	}
 	
 	@GetMapping("/{codigo}/arquivos")
-	public ModelAndView arquivos(@PathVariable("codigo") Cliente cliente) {
+	public ModelAndView arquivos(@PathVariable("codigo") Cliente cliente,Arquivo mArquivo) {
 		ModelAndView mv =  new ModelAndView("cliente/Upload");
 		mv.addObject(cliente);
+		
+		mv.addObject(mArquivo);
 		return mv;
 	}
 	
