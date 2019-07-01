@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,11 +71,14 @@ public class UploadController {
                 mpf.transferTo(newFile);
                 
                 Arquivo arquivo = new Arquivo();
+                
                 arquivo.setName(mpf.getOriginalFilename());
                 arquivo.setTitulo(mArquivo.getTitulo());
                 arquivo.setNewFilename(newFilename);
                 arquivo.setContentType(contentType);
                 arquivo.setSize(mpf.getSize());
+                
+                
                 
                 if(contentType.contains("image/")){
                 	
@@ -85,33 +87,40 @@ public class UploadController {
                     File thumbnailFile = new File(storageDirectory + "/" + thumbnailFilename);
                     ImageIO.write(thumbnail, "png", thumbnailFile);
                     
+                    
+                    
                     arquivo.setThumbnailFilename(thumbnailFilename);
                     arquivo.setThumbnailSize(thumbnailFile.length());
-                    arquivo.setUrl("/picture/"+arquivo.getId());
-                    arquivo.setThumbnailUrl("/thumbnail/"+arquivo.getId());
+                    
+                    arquivo = Criar(arquivo);
+                    
+                    arquivo.setUrl("/upload/picture/"+arquivo.getId());
+                    arquivo.setThumbnailUrl("/upload/thumbnail/"+arquivo.getId());
                     
                 	System.out.println("é uma foto");
                 }
                 
                 if(contentType.contains("video/")){
-                arquivo.setUrl("/movie/"+arquivo.getId());
-                arquivo.setMovieUrl("/movie/"+arquivo.getId());
+                	arquivo = Criar(arquivo);	
+                arquivo.setUrl("/upload/movie/"+arquivo.getId());
+                arquivo.setMovieUrl("/upload//movie/"+arquivo.getId());
                 System.out.println("é um video");
                 
                 }
                 
                 if(contentType.contains("audio/")){
-                arquivo.setUrl("/music/"+arquivo.getId());
-                arquivo.setMovieUrl("/music/"+arquivo.getId());
+                arquivo = Criar(arquivo);	
+                arquivo.setUrl("/upload/music/"+arquivo.getId());
+                arquivo.setMovieUrl("/upload/music/"+arquivo.getId());
                 System.out.println("é um audio");
                 
                 }
                 
 
-                arquivo.setDeleteUrl("/delete/"+arquivo.getId());
+                arquivo.setDeleteUrl("/upload/delete/"+arquivo.getId());
                 arquivo.setDeleteType("DELETE");
                 
-                arquivo = Criar(arquivo);
+                
                 
                 list.add(arquivo);
                 
@@ -209,6 +218,7 @@ public class UploadController {
     public void thumbnail(HttpServletResponse response, @PathVariable Long id) {
 
         Arquivo arquivo = PesquisaPorCodigo(id);
+        
         File arquivoFile = new File(fileUploadDirectory+"/"+arquivo.getThumbnailFilename());
         response.setContentType(arquivo.getContentType());
         if(arquivo.getThumbnailSize()!=null)
@@ -243,10 +253,10 @@ public class UploadController {
     }
     
 	public Arquivo PesquisaPorCodigo(Long id) {
-		Optional<Arquivo>imageOpt = arquivos.findById(id);
+		Optional<Arquivo>arquivoOpt = arquivos.findById(id);
 		
-		if(imageOpt.isPresent()) {
-		return imageOpt.get();
+		if(arquivoOpt.isPresent()) {
+		return arquivoOpt.get();
 		}
 		
 		return null;
