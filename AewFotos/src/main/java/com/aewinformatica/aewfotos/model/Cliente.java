@@ -29,7 +29,18 @@ public class Cliente implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
+	private String isEmpresa;
 	
+	
+	
+	public String getIsEmpresa() {
+		return isEmpresa;
+	}
+
+	public void setIsEmpresa(String isEmpresa) {
+		this.isEmpresa = isEmpresa;
+	}
+
 	@NotBlank
 	private String nome;
 	

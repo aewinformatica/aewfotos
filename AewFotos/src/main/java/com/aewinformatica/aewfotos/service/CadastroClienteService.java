@@ -1,6 +1,9 @@
 package com.aewinformatica.aewfotos.service;
 
+import java.util.List;
+
 import javax.persistence.PersistenceException;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,17 @@ public class CadastroClienteService {
 		
 	}
 	
+	@Transactional
+	public void excluirEmMassa(Long[] codigos) {
+//	public void excluirEmMassa(List<Long> codigos) {
+
+		List<Cliente>listaClientes = clientes.findByCodigoIn(codigos);
+		
+		for(Cliente c:listaClientes) {
+			excluir(c);
+		}
+	}
+	
 	public void excluir(Cliente cliente){
 	
 		Foto foto = fotos.getOne(cliente.getCodigo());
@@ -51,6 +65,7 @@ public class CadastroClienteService {
 			String nomeFoto = foto.getNome();
 			clientes.delete(cliente);
 			clientes.flush();
+			fotos.deleteById(cliente.getCodigo());
 			fotoStorage.excluir(nomeFoto);
 			
 		}catch(PersistenceException e){

@@ -40,11 +40,13 @@
 			
 			<button type="submit" class="btn  btn-primary">Pesquisar</button>
 		</form>
-		
+		<form th:action="@{/clientes/cliente}" method="DELETE">
 		<div class="table-responsive  bw-tabela-simples">
+			<button type="submit" class="btn btn-danger">Excluir registros selecionados</button>
 			<table class="table  table-hover">
 				<thead>
 					<tr>
+					    <th ><input type="checkbox" id="selecao-todos"  /></th>
 						<th class="table-cervejas-col-foto"></th>
 					    <th class="text-center">codigo</th>
 						<th class="table-cervejas-col-nome">Nome</th>
@@ -54,6 +56,7 @@
 				
 				<tbody>
 					<tr th:each="cliente : ${todosclientes}" >
+						<td ><input type="checkbox" class="js-selecao"  th:field="${cliente.codigo}" th:value="${cliente.codigo}"/></td>
 						<td class="text-center">
 							<img th:src="${cliente.urlThumbnailFoto}" class="img-responsive"/>
 <!-- 							<img th:src="${foto.cliente.urlThumbnailFoto}" class="img-responsive"/> -->
@@ -83,6 +86,7 @@
 				</tbody>
 			</table>
 		</div>
+		</form>
 		
 		<div class="table-responsive  bw-tabela-simples">
 		<table class="table  table-hover">
@@ -105,5 +109,68 @@
 	</div>
 
 </section>
+<th:block layout:fragment="javascript-extra">
+<script type="text/javascript">
+//Explorando a Linguagem JavaScript - 7.2. Seletores
+$(function(){
+  //selecionando o checkbox com id=selecao-todos-produtos
+  var selecaoTodosProdutos  = $('#selecao-todos');
+  //selecionando o checkbox com a classe=js-selecao-produto
+  var selecaoProdutos = $('.js-selecao');
+  //função que filtra por checado ou nao checado e estiliza a tr
+  function estilizarLinhaProdutos(){
+    selecaoProdutos.filter(':checked').parents('tr').addClass('selecionado');
+    selecaoProdutos.filter(':not(:checked)').parents('tr').removeClass('selecionado');
+  }
+
+  // funcao para verificar se todos produtos estao selecionados
+  selecaoProdutos.on('click',function(){
+    //filtrando a quantidade de checkbox selecionados
+    var totalProdutosSelecionados = selecaoProdutos.filter(':checked').length;
+    // a variavel checked recebe o resultado da comparacao 
+    var checked = selecaoProdutos.length === totalProdutosSelecionados;
+    //altera o checkbox de selecao de todos produtos se todos produtos
+    //estiverem selecionados passando o resultado true or false
+    selecaoTodosProdutos.prop('checked',checked);
+  });
+
+  //funcao para alterar todos checkboxes de produtos de acordo com o de selecao de todos produtos
+  selecaoTodosProdutos.on('click',function(){
+    selecaoProdutos.prop('checked',selecaoTodosProdutos.prop('checked'));
+    // //alterando a cor de todos checkbox
+    // if(selecaoTodosProdutos.prop('checked')){
+    //   //selecionar todas tr's e incluir a classe "selecionado"
+    //   selecaoProdutos.parents('tr').addClass('selecionado');
+    // }else{
+    //   selecaoProdutos.parents('tr').removeClass('selecionado');
+    // }
+    estilizarLinhaProdutos();
+  });
+
+  //funcao para alterar a cor dos itens da tr do checkbox selecionado
+  //pelo evento onchange pegando o evento que ele lança que exiber o que pode ser manipulado
+  selecaoProdutos.on('change',function(evento){
+    //criando uma variavel para receber um objeto que sera extraido do evento.target
+    // var selecaoProduto = evento.target;
+    // para usar o Jquery fica assim
+    // var selecaoProduto = $(evento.target);
+
+    //navegando ate o objeto pai para manipular a tr parent apenas o primeiro, parents para anteriores
+    //filtrando ate o tr
+    //caso fosse classe usa . caso fosse id # sem nada e Elemento  
+    //verificando se esta marcado ou nao o produto
+    // if(selecaoProduto.prop('checked')){
+    // selecaoProduto.parents('tr').addClass('selecionado');
+    // }
+    // else{
+    //   selecaoProduto.parents('tr').removeClass('selecionado');
+    // }
+    estilizarLinhaProdutos();
+  });
+
+
+});
+</script>
+</th:block>
 </body>
 </html>

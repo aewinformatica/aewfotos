@@ -13,6 +13,7 @@ public interface Fotos extends JpaRepository<Foto, Long> {
 	
 	public Foto findByCliente(Cliente cliente);
 	public Optional<Foto> findByClienteCodigo(Cliente cliente);
+
 	
 
 }
