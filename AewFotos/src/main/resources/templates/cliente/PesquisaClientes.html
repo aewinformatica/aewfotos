@@ -114,56 +114,56 @@
 //Explorando a Linguagem JavaScript - 7.2. Seletores
 $(function(){
   //selecionando o checkbox com id=selecao-todos-produtos
-  var selecaoTodosProdutos  = $('#selecao-todos');
+  var selecaoTodos  = $('#selecao-todos');
   //selecionando o checkbox com a classe=js-selecao-produto
-  var selecaoProdutos = $('.js-selecao');
+  var selecao = $('.js-selecao');
   //função que filtra por checado ou nao checado e estiliza a tr
   function estilizarLinhaProdutos(){
-    selecaoProdutos.filter(':checked').parents('tr').addClass('selecionado');
-    selecaoProdutos.filter(':not(:checked)').parents('tr').removeClass('selecionado');
+    selecao.filter(':checked').parents('tr').addClass('selecionado');
+    selecao.filter(':not(:checked)').parents('tr').removeClass('selecionado');
   }
 
   // funcao para verificar se todos produtos estao selecionados
-  selecaoProdutos.on('click',function(){
+  selecao.on('click',function(){
     //filtrando a quantidade de checkbox selecionados
-    var totalProdutosSelecionados = selecaoProdutos.filter(':checked').length;
+    var totalSelecionados = selecao.filter(':checked').length;
     // a variavel checked recebe o resultado da comparacao 
-    var checked = selecaoProdutos.length === totalProdutosSelecionados;
+    var checked = selecao.length === totalSelecionados;
     //altera o checkbox de selecao de todos produtos se todos produtos
     //estiverem selecionados passando o resultado true or false
-    selecaoTodosProdutos.prop('checked',checked);
+    selecaoTodos.prop('checked',checked);
   });
 
   //funcao para alterar todos checkboxes de produtos de acordo com o de selecao de todos produtos
-  selecaoTodosProdutos.on('click',function(){
-    selecaoProdutos.prop('checked',selecaoTodosProdutos.prop('checked'));
+  selecaoTodos.on('click',function(){
+    selecao.prop('checked',selecaoTodos.prop('checked'));
     // //alterando a cor de todos checkbox
-    // if(selecaoTodosProdutos.prop('checked')){
+    // if(selecaoTodos.prop('checked')){
     //   //selecionar todas tr's e incluir a classe "selecionado"
-    //   selecaoProdutos.parents('tr').addClass('selecionado');
+    //   selecao.parents('tr').addClass('selecionado');
     // }else{
-    //   selecaoProdutos.parents('tr').removeClass('selecionado');
+    //   selecao.parents('tr').removeClass('selecionado');
     // }
     estilizarLinhaProdutos();
   });
 
   //funcao para alterar a cor dos itens da tr do checkbox selecionado
   //pelo evento onchange pegando o evento que ele lança que exiber o que pode ser manipulado
-  selecaoProdutos.on('change',function(evento){
+  selecao.on('change',function(evento){
     //criando uma variavel para receber um objeto que sera extraido do evento.target
-    // var selecaoProduto = evento.target;
+    // var selecao = evento.target;
     // para usar o Jquery fica assim
-    // var selecaoProduto = $(evento.target);
+    // var selecao = $(evento.target);
 
     //navegando ate o objeto pai para manipular a tr parent apenas o primeiro, parents para anteriores
     //filtrando ate o tr
     //caso fosse classe usa . caso fosse id # sem nada e Elemento  
     //verificando se esta marcado ou nao o produto
-    // if(selecaoProduto.prop('checked')){
-    // selecaoProduto.parents('tr').addClass('selecionado');
+    // if(selecao.prop('checked')){
+    // selecao.parents('tr').addClass('selecionado');
     // }
     // else{
-    //   selecaoProduto.parents('tr').removeClass('selecionado');
+    //   selecao.parents('tr').removeClass('selecionado');
     // }
     estilizarLinhaProdutos();
   });
