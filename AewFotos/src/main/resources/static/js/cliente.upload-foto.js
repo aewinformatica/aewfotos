@@ -3,6 +3,7 @@ var cadCli = cadCli || {};
 cadCli.UploadFoto = (function() {
 	
 	function UploadFoto() {
+		this.inputCodigo= $('input[name="codigo"]');
 		this.inputNomeFoto = $('input[name="foto.nome"]');
 		this.inputContentType = $('input[name="foto.contentType"]');
 		this.novaFoto = $('input[name="foto.novaFoto"]');
@@ -63,16 +64,15 @@ cadCli.UploadFoto = (function() {
 		);
 	}
 	
+	
 	function onRemoverFoto() {
-			var deletafoto = '/fotos/delete/' + this.inputNomeFoto.val();
-			$.get(deletafoto,
-				 function(){
-				  console.log("foto deletada com sucesso",deletafoto);
-				 }
-			);
-		
-		
-		
+		var deletafoto = '/clientes/'+ this.inputCodigo.val() + '/foto';
+		$.get(deletafoto,
+			 function(){
+			  console.log("foto deletada com sucesso",deletafoto);
+			 }
+		);
+				
 		$('.js-foto-cliente').remove();
 		this.uploadDrop.removeClass('hidden');
 		this.inputNomeFoto.val('');

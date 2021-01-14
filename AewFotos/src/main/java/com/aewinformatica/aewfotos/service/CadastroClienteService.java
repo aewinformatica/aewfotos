@@ -17,61 +17,73 @@ import com.aewinformatica.aewfotos.storage.FotoStorage;
 
 @Service
 public class CadastroClienteService {
-	
+
 	@Autowired
 	Clientes clientes;
-	
+
 	@Autowired
 	Fotos fotos;
-	
+
 	@Autowired
 	private FotoStorage fotoStorage;
-	
-	public void salvar(Cliente cliente){
-		
-//		cliente.foto.setNome(fotoDTO.getNome());
-		
+
+	public void salvar(Cliente cliente) {
+
 		clientes.save(cliente);
-		
-		//verificar se existe
-	
-//		Foto fotoCliente = fotos.getOne(cliente.getCodigo());
-		
-		Foto fotoCliente = cliente.getFoto();
-			 fotoCliente.setCliente(cliente);
-			 fotoCliente.setContentType(cliente.getFoto().getContentType());
-			 fotoCliente.setNome(cliente.getFoto().getNome());
-		
-		fotos.save(fotoCliente);
-		
+
+		if (cliente.getFoto().getNome().length() > 0) {
+			Foto fotoCliente = cliente.getFoto();
+			fotoCliente.setCliente(cliente);
+			
+			fotos.save(fotoCliente);
+		}
+
 	}
-	
+
 	@Transactional
 	public void excluirEmMassa(Long[] codigos) {
 //	public void excluirEmMassa(List<Long> codigos) {
 
-		List<Cliente>listaClientes = clientes.findByCodigoIn(codigos);
-		
-		for(Cliente c:listaClientes) {
+		List<Cliente> listaClientes = clientes.findByCodigoIn(codigos);
+
+		for (Cliente c : listaClientes) {
 			excluir(c);
 		}
 	}
-	
-	public void excluir(Cliente cliente){
-	
+
+	public void excluir(Cliente cliente) {
+
 		Foto foto = fotos.getOne(cliente.getCodigo());
-		
-		try{
+
+		try {
 			String nomeFoto = foto.getNome();
 			clientes.delete(cliente);
 			clientes.flush();
 			fotos.deleteById(cliente.getCodigo());
 			fotoStorage.excluir(nomeFoto);
-			
-		}catch(PersistenceException e){
-			
-			throw new ImpossivelExcluirEntidadeException("Impossível apagar o cliente. Já foi usado em alguma operaçao.");
+
+		} catch (PersistenceException e) {
+
+			throw new ImpossivelExcluirEntidadeException(
+					"Impossível apagar o cliente. Já foi usado em alguma operaçao.");
 		}
 	}
+	
+	@Transactional
+	public void excluirFoto(Cliente cliente) {
+		Foto foto = fotos.findByCliente(cliente);
 		
+		System.out.println("FOTO" + foto.getNome());
+		try {
+			String nomeFoto = foto.getNome();
+			fotos.deleteById(foto.getCodigo());
+			fotoStorage.excluir(nomeFoto);
+		} catch (PersistenceException e) {
+
+			throw new ImpossivelExcluirEntidadeException(
+					"Impossível apagar a Foto. Já foi usado em alguma operaçao.");
+		}
+	}
+
+
 }

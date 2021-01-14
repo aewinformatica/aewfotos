@@ -1,7 +1,6 @@
 package com.aewinformatica.aewfotos.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -28,137 +27,132 @@ import com.aewinformatica.aewfotos.repository.Fotos;
 import com.aewinformatica.aewfotos.service.CadastroClienteService;
 import com.aewinformatica.aewfotos.service.exception.ImpossivelExcluirEntidadeException;
 
-
-
 @Controller
 @RequestMapping("/clientes")
 public class ClienteController {
 
 	@Autowired
 	private CadastroClienteService cadastroClienteService;
-	
-		//temporario ate fazer o filtro de busca
-			@Autowired
-			private Clientes clientes;
-			
-			@Autowired
-			private Fotos fotos;
-	
-		@RequestMapping(value = "/novo")
-		public ModelAndView novo(Cliente cliente){
-				
+
+	// temporario ate fazer o filtro de busca
+	@Autowired
+	private Clientes clientes;
+
+	@Autowired
+	private Fotos fotos;
+
+	@RequestMapping(value = "/novo")
+	public ModelAndView novo(Cliente cliente) {
 		ModelAndView mv = new ModelAndView("cliente/CadastroCliente");
-	
-		List<Foto>listaFotos = fotos.findAll();
-		mv.addObject("todasfotos",listaFotos);
-		
-		System.out.println("NOVO");
-		
+		List<Foto> listaFotos = fotos.findAll();
+		mv.addObject("todasfotos", listaFotos);
 		return mv;
+	}
+
+	@RequestMapping(value = { "/novo", "{\\d+}" }, method = RequestMethod.POST)
+	public ModelAndView salvar(@Valid Cliente cliente, BindingResult result, Model model,
+			RedirectAttributes attributes) {
+		if (result.hasErrors()) {
+			System.out.println("DEU RUIMM ASPIRA");
+			System.out.println(cliente.getIsEmpresa());
+			return novo(cliente);
 		}
-	
-		@RequestMapping(value = { "/novo", "{\\d+}" }, method = RequestMethod.POST)
-		public ModelAndView salvar(@Valid Cliente cliente, BindingResult result, Model model, RedirectAttributes attributes) {
-			if (result.hasErrors()) {
-				System.out.println("DEU RUIMM ASPIRA");
-				System.out.println(cliente.getIsEmpresa());
-				return novo(cliente);
-			}
-			
-			cadastroClienteService.salvar(cliente);
-			attributes.addFlashAttribute("mensagem", "Cliente salvo com sucesso!");
-			return new ModelAndView("redirect:/clientes/novo");
-		}
-		
-		@GetMapping
-		public ModelAndView pesquisar(Cliente cliente ,Foto foto) {
-			ModelAndView mv = new ModelAndView("cliente/PesquisaClientes");
-			
-			
-			List<Cliente>listaClientes = clientes.findAll();
-			List<Foto>listaFotos = fotos.findAll();
-			
-			mv.addObject("todasfotos",listaFotos);
-			
-			for(int i= 0;listaFotos.size()>i;i++) {
+
+		cadastroClienteService.salvar(cliente);
+		attributes.addFlashAttribute("mensagem", "Cliente salvo com sucesso!");
+		return new ModelAndView("redirect:/clientes/novo");
+	}
+
+	@GetMapping
+	public ModelAndView pesquisar(Cliente cliente, Foto foto) {
+		ModelAndView mv = new ModelAndView("cliente/PesquisaClientes");
+
+		List<Cliente> listaClientes = clientes.findAll();
+		List<Foto> listaFotos = fotos.findAll();
+
+		mv.addObject("todasfotos", listaFotos);
+
+		for (int i = 0; listaFotos.size() > i; i++) {
 			listaFotos.get(i).getUrlThumbnailFoto();
 			listaClientes.get(i).setUrlThumbnailFoto(listaFotos.get(i).getUrlThumbnailFoto());
-			
-			}
-			
-				
-			mv.addObject("todosclientes",listaClientes);
-			
 
-			
-			return mv;
 		}
+
+		mv.addObject("todosclientes", listaClientes);
+
+		return mv;
+	}
+
+	@DeleteMapping("/{codigo}")
+	public @ResponseBody ResponseEntity<?> excluir(@PathVariable("codigo") Cliente cliente) {
+		try {
+			cadastroClienteService.excluir(cliente);
+		} catch (ImpossivelExcluirEntidadeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+		return ResponseEntity.ok().build();
+	}
 	
-		@GetMapping("/cliente")
-		public ModelAndView excluirEmMassa(@RequestParam("codigo") Long[] codigos) {
-//			public @ResponseBody ResponseEntity<?> excluirEmMassa(@RequestParam("codigo") List<Long> codigos) {
-			try {
-//				codigos.forEach(
-//				l->{System.out.println("CODIGO: " + l);}
-//				);
-				cadastroClienteService.excluirEmMassa(codigos);
-				/*
-				public void excluirEmMassa(Long[] codigos, Clientes clientes) {
-					usuarios.findByCodigoIn(codigos).forEach(
-							u->usuarios.delete(u.getCodigo()));
-				}*/
-			} catch (ImpossivelExcluirEntidadeException e) {
-				
-			}
-//			return ResponseEntity.ok().build();
-			return new ModelAndView("redirect:/clientes");
+	@GetMapping("/{codigo}/foto")
+	public @ResponseBody ResponseEntity<?> excluirFoto(@PathVariable("codigo") Cliente cliente) {
+		try {
+			cadastroClienteService.excluirFoto(cliente);
+		} catch (ImpossivelExcluirEntidadeException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-		
-		
-		@DeleteMapping("/{codigo}")
-		public @ResponseBody ResponseEntity<?> excluir(@PathVariable("codigo") Cliente cliente) {
-			try {
-				cadastroClienteService.excluir(cliente);
-			} catch (ImpossivelExcluirEntidadeException e) {
-				return ResponseEntity.badRequest().body(e.getMessage());
-			}
-			return ResponseEntity.ok().build();
-		}
-				
+		return ResponseEntity.ok().build();
+	}
+
 	@GetMapping("/{codigo}")
 	public ModelAndView editar(@PathVariable("codigo") Cliente cliente) {
-		
-		ModelAndView mv = novo(cliente);
-		
 		Foto foto = buscarFotoCodigo(cliente);
-		System.out.println(foto.toString());
 		cliente.setFoto(foto);
-		
+		ModelAndView mv = novo(cliente);
 		mv.addObject(cliente);
 		return mv;
 	}
-	
+
 	@GetMapping("/{codigo}/arquivos")
-	public ModelAndView arquivos(@PathVariable("codigo") Cliente cliente,Arquivo mArquivo) {
-		ModelAndView mv =  new ModelAndView("cliente/Upload");
+	public ModelAndView arquivos(@PathVariable("codigo") Cliente cliente, Arquivo mArquivo) {
+		ModelAndView mv = new ModelAndView("cliente/Upload");
 		mv.addObject(cliente);
-		
+
 		mv.addObject(mArquivo);
 		return mv;
 	}
-	
-	public Foto buscarFotoCliente(Cliente cliente) {
-		Optional<Foto> optFoto = fotos.findByClienteCodigo(cliente);
-		
-		if(!optFoto.isPresent()) {
-			
-			Foto foto = optFoto.get();
-			return foto;
+
+	@GetMapping("/cliente")
+	public ModelAndView excluirEmMassa(@RequestParam("codigo") Long[] codigos) {
+//		public @ResponseBody ResponseEntity<?> excluirEmMassa(@RequestParam("codigo") List<Long> codigos) {
+		try {
+//			codigos.forEach(
+//			l->{System.out.println("CODIGO: " + l);}
+//			);
+			cadastroClienteService.excluirEmMassa(codigos);
+			/*
+			 * public void excluirEmMassa(Long[] codigos, Clientes clientes) {
+			 * usuarios.findByCodigoIn(codigos).forEach( u->usuarios.delete(u.getCodigo()));
+			 * }
+			 */
+		} catch (ImpossivelExcluirEntidadeException e) {
+
 		}
-		
-		return null;
+//		return ResponseEntity.ok().build();
+		return new ModelAndView("redirect:/clientes");
 	}
-	
+
+//	public Foto buscarFotoCliente(Cliente cliente) {
+//		Optional<Foto> optFoto = fotos.findByCliente(cliente);
+//
+//		if (!optFoto.isPresent()) {
+//
+//			Foto foto = optFoto.get();
+//			return foto;
+//		}
+//
+//		return null;
+//	}
+//
 	public Foto buscarFotoCodigo(Cliente cliente) {
 		Foto foto = fotos.findByCliente(cliente);
 		return foto;
