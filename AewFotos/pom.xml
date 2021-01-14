@@ -22,7 +22,7 @@
 		<thumbnailator.version>0.4.8</thumbnailator.version>
 		
 						<!-- Apache Bean Utils -->
-		<commons-beanutils.version>1.9.3</commons-beanutils.version>
+		<commons-beanutils.version>1.9.4</commons-beanutils.version>
 	</properties>
 
 	<dependencies>
