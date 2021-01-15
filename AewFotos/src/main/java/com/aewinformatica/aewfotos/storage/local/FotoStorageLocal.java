@@ -104,7 +104,7 @@ public class FotoStorageLocal implements FotoStorage {
 		try {
 
 			urlBase  = "http://" + InetAddress.getLocalHost().getHostAddress() +":"+ port+"/fotos/";
-			System.out.println(urlBase.toString());
+			//System.out.println(urlBase.toString());
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

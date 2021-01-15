@@ -55,16 +55,13 @@
 				</thead>
 				
 				<tbody>
-					<tr th:each="cliente : ${todosclientes}" >
+					<tr th:each="cliente : ${clientes}" >
 						<td ><input type="checkbox" class="js-selecao"  th:field="${cliente.codigo}" th:value="${cliente.codigo}"/></td>
 						<td class="text-center">
-							<img th:src="${cliente.urlThumbnailFoto}" class="img-responsive"/>
-<!-- 							<img th:src="${foto.cliente.urlThumbnailFoto}" class="img-responsive"/> -->
-							
+							<img th:src="${cliente.foto.urlThumbnailFoto}" class="img-responsive"/>							
 						</td>
 						<td class="text-center" th:text="${cliente.codigo}">1</td>
 						<td th:text="${cliente.nome}">Jose</td>
-						<td th:text="${foto.nome}">FOTO</td>
 						<td class="text-center">
 							<a class="btn  btn-link  btn-xs  js-tooltip" title="Editar" 
 									th:href="@{/clientes/{codigo}(codigo=${cliente.codigo})}"> 
@@ -88,22 +85,7 @@
 		</div>
 		</form>
 		
-		<div class="table-responsive  bw-tabela-simples">
-		<table class="table  table-hover">
-		<thead>
-		<tr>
-			<th class="text-center">FOTO</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr th:each="foto : ${todasfotos}">
-			<td class="text-center">
-			<img th:src="${foto.urlThumbnailFoto}" class="img-responsive"/>
-			<td>
-		</tr>
-		</tbody>
-		</table>
-		</div>
+
 		
 		
 	</div>

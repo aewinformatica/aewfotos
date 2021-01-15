@@ -1,5 +1,6 @@
 package com.aewinformatica.aewfotos.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,34 +61,56 @@ public class ClienteController {
 		}
 		
 		Optional<Foto> fotoEncontrada = fotos.findByCliente(cliente);
-
-		if (fotoEncontrada.isPresent())
+		if (fotoEncontrada.isPresent()) 
 			cliente.setFoto(fotoEncontrada.get());
-
+		
+		
 		cadastroClienteService.salvar(cliente);
 		attributes.addFlashAttribute("mensagem", "Cliente salvo com sucesso!");
 		return new ModelAndView("redirect:/clientes/novo");
 	}
-
+	
 	@GetMapping
-	public ModelAndView pesquisar(Cliente cliente, Foto foto) {
+	public ModelAndView pesquisar(Cliente cliente) {
 		ModelAndView mv = new ModelAndView("cliente/PesquisaClientes");
 
-		List<Cliente> listaClientes = clientes.findAll();
-		List<Foto> listaFotos = fotos.findAll();
+		List<Cliente> clientesComFoto = new ArrayList<Cliente>();
 
-		mv.addObject("todasfotos", listaFotos);
+		for (Cliente c : clientes.findAll()) {
+//			Foto f = new Foto();
+			Optional<Foto> f = fotos.findByCliente(c);
+			if (f.isPresent())
+				c.setFoto(f.get());
 
-		for (int i = 0; listaFotos.size() > i; i++) {
-			listaFotos.get(i).getUrlThumbnailFoto();
-			listaClientes.get(i).setUrlThumbnailFoto(listaFotos.get(i).getUrlThumbnailFoto());
-
+			// quando exclui a foto da NULL pointer
+			// System.out.println("CLIENTE" + c.getFoto().getUrlThumbnailFoto());
+			clientesComFoto.add(c);
 		}
 
-		mv.addObject("todosclientes", listaClientes);
+		mv.addObject("clientes", clientesComFoto);
 
 		return mv;
 	}
+
+//	@GetMapping
+//	public ModelAndView pesquisar(Cliente cliente, Foto foto) {
+//		ModelAndView mv = new ModelAndView("cliente/PesquisaClientes");
+//
+//		List<Cliente> listaClientes = clientes.findAll();
+//		List<Foto> listaFotos = fotos.findAll();
+//
+//		mv.addObject("todasfotos", listaFotos);
+//
+//		for (int i = 0; listaFotos.size() > i; i++) {
+//			listaFotos.get(i).getUrlThumbnailFoto();
+//			listaClientes.get(i).setUrlThumbnailFoto(listaFotos.get(i).getUrlThumbnailFoto());
+//
+//		}
+//
+//		mv.addObject("todosclientes", listaClientes);
+//
+//		return mv;
+//	}
 
 	@DeleteMapping("/{codigo}")
 	public @ResponseBody ResponseEntity<?> excluir(@PathVariable("codigo") Cliente cliente) {
@@ -111,9 +134,12 @@ public class ClienteController {
 
 	@GetMapping("/{codigo}")
 	public ModelAndView editar(@PathVariable("codigo") Cliente cliente) {
+		
+		
 		Optional<Foto> foto = fotos.findByCliente(cliente);
-		if(foto.isPresent())
+		if(foto.isPresent()  && !foto.get().nome.isEmpty())
 		cliente.setFoto(foto.get());
+		
 		ModelAndView mv = novo(cliente);
 		mv.addObject(cliente);
 		return mv;
