@@ -71,7 +71,7 @@ public class CadastroClienteService {
 	
 	@Transactional
 	public void excluirFoto(Cliente cliente) {
-		Foto foto = fotos.findByCliente(cliente);
+		Foto foto = fotos.findByCliente(cliente).get();
 		
 		System.out.println("FOTO" + foto.getNome());
 		try {

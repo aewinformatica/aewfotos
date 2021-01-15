@@ -1,6 +1,7 @@
 package com.aewinformatica.aewfotos.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -57,6 +58,11 @@ public class ClienteController {
 			System.out.println(cliente.getIsEmpresa());
 			return novo(cliente);
 		}
+		
+		Optional<Foto> fotoEncontrada = fotos.findByCliente(cliente);
+
+		if (fotoEncontrada.isPresent())
+			cliente.setFoto(fotoEncontrada.get());
 
 		cadastroClienteService.salvar(cliente);
 		attributes.addFlashAttribute("mensagem", "Cliente salvo com sucesso!");
@@ -105,8 +111,9 @@ public class ClienteController {
 
 	@GetMapping("/{codigo}")
 	public ModelAndView editar(@PathVariable("codigo") Cliente cliente) {
-		Foto foto = buscarFotoCodigo(cliente);
-		cliente.setFoto(foto);
+		Optional<Foto> foto = fotos.findByCliente(cliente);
+		if(foto.isPresent())
+		cliente.setFoto(foto.get());
 		ModelAndView mv = novo(cliente);
 		mv.addObject(cliente);
 		return mv;
@@ -141,20 +148,4 @@ public class ClienteController {
 		return new ModelAndView("redirect:/clientes");
 	}
 
-//	public Foto buscarFotoCliente(Cliente cliente) {
-//		Optional<Foto> optFoto = fotos.findByCliente(cliente);
-//
-//		if (!optFoto.isPresent()) {
-//
-//			Foto foto = optFoto.get();
-//			return foto;
-//		}
-//
-//		return null;
-//	}
-//
-	public Foto buscarFotoCodigo(Cliente cliente) {
-		Foto foto = fotos.findByCliente(cliente);
-		return foto;
-	}
 }
