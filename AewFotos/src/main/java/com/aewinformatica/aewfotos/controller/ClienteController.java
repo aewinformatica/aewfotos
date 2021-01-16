@@ -58,13 +58,7 @@ public class ClienteController {
 			System.out.println("DEU RUIMM ASPIRA");
 			System.out.println(cliente.getIsEmpresa());
 			return novo(cliente);
-		}
-		
-		Optional<Foto> fotoEncontrada = fotos.findByCliente(cliente);
-		if (fotoEncontrada.isPresent()) 
-			cliente.setFoto(fotoEncontrada.get());
-		
-		
+		}		
 		cadastroClienteService.salvar(cliente);
 		attributes.addFlashAttribute("mensagem", "Cliente salvo com sucesso!");
 		return new ModelAndView("redirect:/clientes/novo");

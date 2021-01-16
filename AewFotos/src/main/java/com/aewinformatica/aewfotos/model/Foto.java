@@ -6,7 +6,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -15,35 +14,27 @@ import org.springframework.util.StringUtils;
 
 import com.aewinformatica.aewfotos.repository.listener.FotoEntityListener;
 
-
-
 @EntityListeners(FotoEntityListener.class)
 @Entity
-@Table(name="cliente_foto")
+@Table(name="foto")
 public class Foto {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long codigo;
-	
 	public String nome;
 	
-	@OneToOne
-	@JoinColumn(name = "codigo_cliente")
+	@OneToOne(mappedBy = "foto")
 	private Cliente cliente;
-		
+	
 	@Column(name = "content_type")
 	private String contentType;
-	
 	@Transient
 	private boolean novaFoto;
-
 	@Transient
 	private String urlFoto;
-
 	@Transient
 	private String urlThumbnailFoto;
-	
 	
 	public String getFotoOuMock() {
 		return !StringUtils.isEmpty(nome) ? nome : "mock-cliente.png";
@@ -53,7 +44,6 @@ public class Foto {
 		return !StringUtils.isEmpty(this.nome);
 	}
 
-	
 	public Long getCodigo() {
 		return codigo;
 	}
@@ -106,8 +96,6 @@ public class Foto {
 		return urlThumbnailFoto;
 	}
 	
-	
-
 	public void setUrlThumbnailFoto(String urlThumbnailFoto) {
 		this.urlThumbnailFoto = urlThumbnailFoto;
 	}

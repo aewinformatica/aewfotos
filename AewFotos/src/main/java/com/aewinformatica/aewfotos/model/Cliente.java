@@ -2,12 +2,14 @@ package com.aewinformatica.aewfotos.model;
 
 import java.io.Serializable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
@@ -31,8 +33,6 @@ public class Cliente implements Serializable{
 	private Long codigo;
 	private String isEmpresa;
 	
-	
-	
 	public String getIsEmpresa() {
 		return isEmpresa;
 	}
@@ -44,10 +44,12 @@ public class Cliente implements Serializable{
 	@NotBlank
 	private String nome;
 	
-//	@OneToOne(fetch = FetchType.LAZY)
-	@Transient
-	@OneToOne(mappedBy ="cliente")
-	@JoinColumn(name="codigo_foto")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinTable(name = "cliente_foto", 
+    joinColumns = 
+      { @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo") },
+    inverseJoinColumns = 
+      { @JoinColumn(name = "foto_codigo", referencedColumnName = "codigo") })
 	private Foto foto;
 	
 	@Transient

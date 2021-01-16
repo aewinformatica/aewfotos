@@ -40,8 +40,8 @@ public class CadastroClienteService {
 		fotoCliente.setNome(cliente.getFoto().getNome());*/
 		fotoCliente.setCliente(clienteSalvo);
 		
-		if (!fotoCliente.getNome().isEmpty())
-			fotos.save(fotoCliente);
+		//if (!fotoCliente.getNome().isEmpty())
+		//	fotos.save(fotoCliente);
 
 	}
 
