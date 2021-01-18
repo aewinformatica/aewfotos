@@ -43,6 +43,7 @@ public class CadastroClienteService {
 		}
 	}
 
+	@Transactional
 	public void excluir(Cliente cliente) {
 
 		Foto foto = fotos.getOne(cliente.getCodigo());

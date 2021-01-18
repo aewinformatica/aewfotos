@@ -5,6 +5,7 @@ import java.io.Serializable;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +16,8 @@ import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.LazyToOne;
+import org.hibernate.annotations.LazyToOneOption;
 import org.springframework.util.StringUtils;
 
 import com.aewinformatica.aewfotos.repository.listener.ClienteEntityListener;
@@ -44,7 +47,8 @@ public class Cliente implements Serializable{
 	@NotBlank
 	private String nome;
 	
-	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@LazyToOne(LazyToOneOption.NO_PROXY)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY, optional=false)
 	@JoinTable(name = "cliente_foto", 
     joinColumns = 
       { @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo") },
