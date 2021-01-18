@@ -1,7 +1,6 @@
 package com.aewinformatica.aewfotos.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
@@ -30,24 +29,12 @@ public class CadastroClienteService {
 
 	public void salvar(Cliente cliente) {
 
-		Cliente clienteSalvo = clientes.save(cliente);
-
-		Foto fotoCliente = new Foto();
-			 fotoCliente = cliente.getFoto();
-		/*
-		fotoCliente.setCodigo(cliente.getFoto().getCodigo());
-		fotoCliente.setContentType(cliente.getFoto().getContentType());
-		fotoCliente.setNome(cliente.getFoto().getNome());*/
-		fotoCliente.setCliente(clienteSalvo);
-		
-		//if (!fotoCliente.getNome().isEmpty())
-		//	fotos.save(fotoCliente);
+		clientes.save(cliente);
 
 	}
 
 	@Transactional
 	public void excluirEmMassa(Long[] codigos) {
-//	public void excluirEmMassa(List<Long> codigos) {
 
 		List<Cliente> listaClientes = clientes.findByCodigoIn(codigos);
 
@@ -64,11 +51,11 @@ public class CadastroClienteService {
 			String nomeFoto = foto.getNome();
 			clientes.delete(cliente);
 			clientes.flush();
-			fotos.deleteById(cliente.getCodigo());
+			//fotos.deleteById(cliente.getCodigo());
 			fotoStorage.excluir(nomeFoto);
 
 		} catch (PersistenceException e) {
-
+			System.out.println("MSG" + e);
 			throw new ImpossivelExcluirEntidadeException(
 					"Impossível apagar o cliente. Já foi usado em alguma operaçao.");
 		}

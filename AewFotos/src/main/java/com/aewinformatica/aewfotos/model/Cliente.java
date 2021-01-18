@@ -44,7 +44,7 @@ public class Cliente implements Serializable{
 	@NotBlank
 	private String nome;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinTable(name = "cliente_foto", 
     joinColumns = 
       { @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo") },
